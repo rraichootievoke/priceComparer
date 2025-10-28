@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PriceCompareApp
+﻿namespace PriceCompare.Core.Contracts
 {
-    public class QuoteData
+    public class OrderResponseModel
     {
         public string MyDoorOrderNum { get; set; }
         public string? DealerAccountNum { get; set; }
@@ -20,5 +14,4 @@ namespace PriceCompareApp
         public string? IsConfigurationChanged { get; set; }
         public string? IsLinesAddedDeleted { get; set; }
     }
-
 }
