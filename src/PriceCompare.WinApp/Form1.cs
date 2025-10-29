@@ -171,11 +171,14 @@ namespace PriceCompareApp
 
         private void OrdersFilter_TextChanged(object? sender, EventArgs e)
         {
-            if (_ordersTable == null) return;
+            if (_ordersTable == null) 
+                return;
             var term = richTextBox1.Text.Trim().Replace("'", "''");
             var dv = _ordersTable.DefaultView;
-            if (string.IsNullOrEmpty(term)) dv.RowFilter = string.Empty;
-            else dv.RowFilter = $"Convert(OrderId,'System.String') LIKE '%{term}%' OR DealerName LIKE '%{term}%' OR OracleDealerId LIKE '%{term}%' OR FullName LIKE '%{term}%'";
+            if (string.IsNullOrEmpty(term))
+                dv.RowFilter = string.Empty;
+            else 
+                dv.RowFilter = $"Convert(OrderId,'System.String') LIKE '%{term}%' OR DealerName LIKE '%{term}%' OR OracleDealerId LIKE '%{term}%' OR FullName LIKE '%{term}%'";
             statusStrip1.Items.Clear();
             statusStrip1.Items.Add($"Filtered: {dv.Count}/{_ordersTable.Rows.Count}");
         }
