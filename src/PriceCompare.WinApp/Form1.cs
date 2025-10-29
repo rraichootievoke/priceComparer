@@ -4,7 +4,6 @@ using PriceCompare.Core.Helpers;
 using PriceCompare.Core.Repositories;
 using PriceCompare.Core.Services;
 using System.Data;
-using System.Data.SqlClient;
 
 namespace PriceCompareApp
 {
@@ -19,81 +18,18 @@ namespace PriceCompareApp
         public Form1()
         {
             InitializeComponent();
-
-            // Initialize repository and service
             var orderRepository = new OrderRepository();
             _orderService = new OrderService(orderRepository);
 
-            dgvOrdersList.CellClick += async (s, e) => await DataGridView2_CellClickAsync(s, e);
-            dgvOrdersList.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvOrdersList.DataBindingComplete += DataGridView2_DataBindingComplete;
-
-            // Enable typing search in dealers combo
             cbDealers.DropDownStyle = ComboBoxStyle.DropDown;
-            cbDealers.TextUpdate += CbDealers_TextUpdate; // fires while typing
-            cbDealers.KeyDown += CbDealers_KeyDown; // allow ESC to reset
-            richTextBox1.TextChanged += OrdersFilter_TextChanged; // use richTextBox1 as filter box
+            cbDealers.TextUpdate += CbDealers_TextUpdate;
+            cbDealers.KeyDown += CbDealers_KeyDown;
+            richTextBox1.TextChanged += OrdersFilter_TextChanged;
         }
 
         private async void Form1_Load(object sender, EventArgs e)
         {
             await LoadDealersAsync();
-            //await LoadRecentOrdersAsync(); -- Todo: will check later
-        }
-
-        private async Task LoadDealerOrdersAsync()
-        {
-            try
-            {
-                Cursor = Cursors.WaitCursor;
-                var selected = cbDealers.SelectedItem as DealerDisplay;
-                string? oracleDealerId = selected?.OracleDealerId;
-                string? dealerName = selected?.CompanyName;
-                int? dealerId = selected?.Id;
-                long? orderId = null;
-                if (long.TryParse(txtOrderId.Text.Trim(), out var oid)) orderId = oid; // user may supply order id
-                DateTime? start = dtpFrom.Value.Date;
-                DateTime? end = dtpTo.Value.Date;
-                var dt = await _orderService.SearchDealerOrdersAsync(status: null, orderId: orderId, oracleDealerId: oracleDealerId, dealerName: dealerName, dealerId: dealerId, createdStart: start, createdEnd: end);
-                _ordersTable = dt;
-                _ordersBindingSource.DataSource = _ordersTable;
-                dgvOrders.DataSource = _ordersBindingSource;
-                foreach (DataGridViewColumn col in dgvOrders.Columns) col.SortMode = DataGridViewColumnSortMode.Automatic; // enable sorting
-                statusStrip1.Items.Clear();
-                statusStrip1.Items.Add($"Records: {dt.Rows.Count}");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error loading dealer orders: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                Cursor = Cursors.Default;
-            }
-        }
-
-        private void OrdersFilter_TextChanged(object? sender, EventArgs e)
-        {
-            if (_ordersTable == null) return;
-            var term = richTextBox1.Text.Trim().Replace("'", "''");
-            var dv = _ordersTable.DefaultView;
-            if (string.IsNullOrEmpty(term)) dv.RowFilter = string.Empty;
-            else dv.RowFilter = $"Convert(OrderId,'System.String') LIKE '%{term}%' OR DealerName LIKE '%{term}%' OR OracleDealerId LIKE '%{term}%' OR FullName LIKE '%{term}%'";
-            statusStrip1.Items.Clear();
-            statusStrip1.Items.Add($"Filtered: {dv.Count}/{_ordersTable.Rows.Count}");
-        }
-
-        private void DataGridView2_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
-        {
-            if (dgvOrdersList.Columns["ComponentValue"] != null)
-                dgvOrdersList.Columns["ComponentValue"].FillWeight = 300;
-            if (dgvOrdersList.Columns["OrderId"] != null)
-                dgvOrdersList.Columns["OrderId"].FillWeight = 50;
-            if (dgvOrdersList.Columns["MyDoorItemListPrice"] != null)
-                dgvOrdersList.Columns["MyDoorItemListPrice"].FillWeight = 50;
-            if (dgvOrdersList.Columns["MyDoorTotalPrice"] != null)
-                dgvOrdersList.Columns["MyDoorTotalPrice"].FillWeight = 50;
         }
 
         private async Task LoadDealersAsync()
@@ -202,6 +138,48 @@ namespace PriceCompareApp
             public string Display { get; init; } = string.Empty;
         }
 
+        private async Task LoadDealerOrdersAsync()
+        {
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+                var selected = cbDealers.SelectedItem as DealerDisplay;
+                string? oracleDealerId = selected?.OracleDealerId;
+                string? dealerName = selected?.CompanyName;
+                int? dealerId = selected?.Id;
+                long? orderId = null;
+                if (long.TryParse(txtOrderId.Text.Trim(), out var oid)) orderId = oid; // user may supply order id
+                DateTime? start = dtpFrom.Value.Date;
+                DateTime? end = dtpTo.Value.Date;
+                var dt = await _orderService.SearchDealerOrdersAsync(status: null, orderId: orderId, oracleDealerId: oracleDealerId, dealerName: dealerName, dealerId: dealerId, createdStart: start, createdEnd: end);
+                _ordersTable = dt;
+                _ordersBindingSource.DataSource = _ordersTable;
+                dgvOrders.DataSource = _ordersBindingSource;
+                foreach (DataGridViewColumn col in dgvOrders.Columns) col.SortMode = DataGridViewColumnSortMode.Automatic; // enable sorting
+                statusStrip1.Items.Clear();
+                statusStrip1.Items.Add($"Records: {dt.Rows.Count}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading dealer orders: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private void OrdersFilter_TextChanged(object? sender, EventArgs e)
+        {
+            if (_ordersTable == null) return;
+            var term = richTextBox1.Text.Trim().Replace("'", "''");
+            var dv = _ordersTable.DefaultView;
+            if (string.IsNullOrEmpty(term)) dv.RowFilter = string.Empty;
+            else dv.RowFilter = $"Convert(OrderId,'System.String') LIKE '%{term}%' OR DealerName LIKE '%{term}%' OR OracleDealerId LIKE '%{term}%' OR FullName LIKE '%{term}%'";
+            statusStrip1.Items.Clear();
+            statusStrip1.Items.Add($"Filtered: {dv.Count}/{_ordersTable.Rows.Count}");
+        }
+
         private async Task LoadRecentOrdersAsync(int? days = null)
         {
             try
@@ -231,44 +209,11 @@ namespace PriceCompareApp
             }
         }
 
-        private async Task DataGridView2_CellClickAsync(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex >= 0)
-            {
-                var row = dgvOrdersList.Rows[e.RowIndex];
-                var orderIdObj = row.Cells["OrderId"].Value;
-                long orderId = 0;
-
-                if (orderIdObj is long longValue)
-                {
-                    orderId = longValue;
-                }
-                else if (orderIdObj is int intValue)
-                {
-                    orderId = intValue;
-                }
-                else if (orderIdObj != null && long.TryParse(orderIdObj.ToString(), out long parsedId))
-                {
-                    orderId = parsedId;
-                }
-
-                if (orderId != 0)
-                {
-                    await LoadOrderDetailsAsync(orderId);
-                }
-            }
-        }
-
         private async Task LoadOrderDetailsAsync(long orderId)
         {
             try
             {
-                Cursor = Cursors.WaitCursor;
-
-                // Load order item details
                 var dtRaw = await _orderService.GetOrderDetailsAsync(orderId);
-
-                // Transform data for display
                 var displayDt = new DataTable();
                 displayDt.Columns.Add("OrderId", typeof(long));
                 displayDt.Columns.Add("ComponentValue", typeof(string));
@@ -284,40 +229,21 @@ namespace PriceCompareApp
                     displayDt.Rows.Add(orderId, componentValue, itemListPrice, totalPrice);
                 }
 
-                dataGridView1.DataSource = displayDt;
+                dgvMyDoorData.DataSource = displayDt;
 
-                // Load quote data
                 var quoteData = await _orderService.GetQuoteDataAsync(orderId);
-                dataGridView3.DataSource = quoteData;
+                dgviStoreData.DataSource = quoteData;
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error loading order details: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            finally
-            {
-                Cursor = Cursors.Default;
-            }
-        }
-
-        private async void button1_Click(object sender, EventArgs e)
-        {
-            // repurpose Filter button to load dealer orders with current filters
-            await LoadDealerOrdersAsync();
         }
 
         private async void btnSearch_Click(object sender, EventArgs e)
         {
             try
             {
-                await LoadDealerOrdersAsync(); // initial load
-
-                if (string.IsNullOrWhiteSpace(txtOrderId.Text))
-                {
-                    MessageBox.Show("Please enter an account number.", "Validation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
                 await LoadRecentOrdersAsync();
 
                 btnSearch.Enabled = false;
@@ -348,7 +274,7 @@ namespace PriceCompareApp
             }
         }
 
-        private void button2_Click_1(object sender, EventArgs e)
+        private void btnClear_Click(object sender, EventArgs e)
         {
             txtOrderId.Clear();
             dtpFrom.Value = DateTime.Now.AddDays(-30);
@@ -356,6 +282,34 @@ namespace PriceCompareApp
             richTextBox1.Clear();
             _ordersBindingSource.RemoveFilter();
             statusStrip1.Items.Clear();
+        }
+
+        private async void dgvOrdersList_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                var row = dgvOrdersList.Rows[e.RowIndex];
+                var orderIdObj = row.Cells["OrderId"].Value;
+                long orderId = 0;
+
+                if (orderIdObj is long longValue)
+                {
+                    orderId = longValue;
+                }
+                else if (orderIdObj is int intValue)
+                {
+                    orderId = intValue;
+                }
+                else if (orderIdObj != null && long.TryParse(orderIdObj.ToString(), out long parsedId))
+                {
+                    orderId = parsedId;
+                }
+
+                if (orderId != 0)
+                {
+                    await LoadOrderDetailsAsync(orderId);
+                }
+            }
         }
 
         public string GetDate()

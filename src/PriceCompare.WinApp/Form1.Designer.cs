@@ -6,7 +6,7 @@
         ///  Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView dgvMyDoorData;
 
         /// <summary>
         ///  Clean up any resources being used.
@@ -29,12 +29,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            dataGridView1 = new DataGridView();
+            dgvMyDoorData = new DataGridView();
             dgvOrdersList = new DataGridView();
-            dataGridView3 = new DataGridView();
+            dgviStoreData = new DataGridView();
             lblDealers = new Label();
-            textBox1 = new TextBox();
-            button1 = new Button();
             btnSearch = new Button();
             lblFrom = new Label();
             lblTo = new Label();
@@ -52,9 +50,9 @@
             label2 = new Label();
             statusStrip1 = new StatusStrip();
             dgvOrders = new DataGridView();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvMyDoorData).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvOrdersList).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView3).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgviStoreData).BeginInit();
             gbSearch.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -63,40 +61,45 @@
             ((System.ComponentModel.ISupportInitialize)dgvOrders).BeginInit();
             SuspendLayout();
             // 
-            // dataGridView1
+            // dgvMyDoorData
             // 
-            dataGridView1.ColumnHeadersHeight = 34;
-            dataGridView1.Dock = DockStyle.Bottom;
-            dataGridView1.Location = new Point(0, 36);
-            dataGridView1.Margin = new Padding(2);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowHeadersWidth = 62;
-            dataGridView1.Size = new Size(581, 231);
-            dataGridView1.TabIndex = 1;
+            dgvMyDoorData.AllowUserToOrderColumns = true;
+            dgvMyDoorData.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgvMyDoorData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dgvMyDoorData.ColumnHeadersHeight = 34;
+            dgvMyDoorData.Location = new Point(0, 36);
+            dgvMyDoorData.Margin = new Padding(2);
+            dgvMyDoorData.Name = "dgvMyDoorData";
+            dgvMyDoorData.RowHeadersWidth = 62;
+            dgvMyDoorData.Size = new Size(581, 231);
+            dgvMyDoorData.TabIndex = 1;
+            dgvMyDoorData.CellClick += dgvOrdersList_CellClick;
             // 
             // dgvOrdersList
             // 
             dgvOrdersList.AllowUserToOrderColumns = true;
-            dgvOrdersList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            dgvOrdersList.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvOrdersList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvOrdersList.Location = new Point(830, 206);
+            dgvOrdersList.Location = new Point(12, 205);
             dgvOrdersList.Margin = new Padding(2);
             dgvOrdersList.Name = "dgvOrdersList";
             dgvOrdersList.RowHeadersWidth = 62;
-            dgvOrdersList.Size = new Size(315, 296);
+            dgvOrdersList.Size = new Size(621, 296);
             dgvOrdersList.TabIndex = 2;
-            //dgvOrdersList.CellContentClick += dgvOrdersList_CellContentClick;
+            dgvOrdersList.CellClick += dgvOrdersList_CellClick;
             // 
-            // dataGridView3
+            // dgviStoreData
             // 
-            dataGridView3.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView3.Dock = DockStyle.Bottom;
-            dataGridView3.Location = new Point(0, 36);
-            dataGridView3.Margin = new Padding(2);
-            dataGridView3.Name = "dataGridView3";
-            dataGridView3.RowHeadersWidth = 62;
-            dataGridView3.Size = new Size(549, 231);
-            dataGridView3.TabIndex = 3;
+            dgviStoreData.AllowUserToOrderColumns = true;
+            dgviStoreData.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgviStoreData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dgviStoreData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgviStoreData.Location = new Point(0, 36);
+            dgviStoreData.Margin = new Padding(2);
+            dgviStoreData.Name = "dgviStoreData";
+            dgviStoreData.RowHeadersWidth = 62;
+            dgviStoreData.Size = new Size(549, 231);
+            dgviStoreData.TabIndex = 3;
             // 
             // lblDealers
             // 
@@ -107,25 +110,6 @@
             lblDealers.Size = new Size(45, 15);
             lblDealers.TabIndex = 4;
             lblDealers.Text = "Dealers";
-            // 
-            // textBox1
-            // 
-            textBox1.Location = new Point(489, 108);
-            textBox1.Margin = new Padding(2);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(127, 23);
-            textBox1.TabIndex = 5;
-            // 
-            // button1
-            // 
-            button1.Location = new Point(489, 79);
-            button1.Margin = new Padding(2);
-            button1.Name = "button1";
-            button1.Size = new Size(78, 27);
-            button1.TabIndex = 6;
-            button1.Text = "Filter";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
             // 
             // btnSearch
             // 
@@ -208,7 +192,7 @@
             btnClear.TabIndex = 13;
             btnClear.Text = "Clear";
             btnClear.UseVisualStyleBackColor = true;
-            btnClear.Click += button2_Click_1;
+            btnClear.Click += btnClear_Click;
             // 
             // gbSearch
             // 
@@ -216,8 +200,6 @@
             gbSearch.Controls.Add(btnClear);
             gbSearch.Controls.Add(lblDealers);
             gbSearch.Controls.Add(btnSearch);
-            gbSearch.Controls.Add(textBox1);
-            gbSearch.Controls.Add(button1);
             gbSearch.Controls.Add(lblFrom);
             gbSearch.Controls.Add(dtpTo);
             gbSearch.Controls.Add(lblTo);
@@ -233,9 +215,9 @@
             // richTextBox1
             // 
             richTextBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            richTextBox1.Location = new Point(639, 0);
+            richTextBox1.Location = new Point(639, 21);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(518, 156);
+            richTextBox1.Size = new Size(506, 135);
             richTextBox1.TabIndex = 15;
             richTextBox1.Text = "";
             // 
@@ -252,17 +234,18 @@
             // 
             // splitContainer1
             // 
+            splitContainer1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             splitContainer1.Location = new Point(11, 507);
             splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
             // 
-            splitContainer1.Panel1.Controls.Add(dataGridView1);
+            splitContainer1.Panel1.Controls.Add(dgvMyDoorData);
             splitContainer1.Panel1.Controls.Add(label1);
             // 
             // splitContainer1.Panel2
             // 
-            splitContainer1.Panel2.Controls.Add(dataGridView3);
+            splitContainer1.Panel2.Controls.Add(dgviStoreData);
             splitContainer1.Panel2.Controls.Add(label2);
             splitContainer1.Size = new Size(1134, 267);
             splitContainer1.SplitterDistance = 581;
@@ -301,9 +284,9 @@
             // dgvOrders
             // 
             dgvOrders.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvOrders.Location = new Point(12, 207);
+            dgvOrders.Location = new Point(857, 162);
             dgvOrders.Name = "dgvOrders";
-            dgvOrders.Size = new Size(804, 294);
+            dgvOrders.Size = new Size(286, 123);
             dgvOrders.TabIndex = 18;
             // 
             // Form1
@@ -322,9 +305,9 @@
             Name = "Form1";
             Text = "Form1";
             Load += Form1_Load;
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvMyDoorData).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvOrdersList).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView3).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgviStoreData).EndInit();
             gbSearch.ResumeLayout(false);
             gbSearch.PerformLayout();
             splitContainer1.Panel1.ResumeLayout(false);
@@ -341,10 +324,8 @@
         #endregion
 
         private DataGridView dgvOrdersList;
-        private DataGridView dataGridView3;
+        private DataGridView dgviStoreData;
         private Label lblDealers;
-        private TextBox textBox1;
-        private Button button1;
         private Button btnSearch;
         private Label lblFrom;
         private Label lblTo;
