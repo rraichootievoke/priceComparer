@@ -314,28 +314,5 @@ namespace PriceCompareApp
                 }
             }
         }
-
-        public string GetDate()
-        {
-            try
-            {
-                using (var connection = new OracleConnection(ConfigurationHelper.OracleConnectionString))
-                using (var command = new OracleCommand(ConfigurationHelper.GetStoredProcedure("OracleGetIStoreQuoteDetails"), connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.Add("v_dealer_num", OracleDbType.Varchar2).Value = "24269";
-                    command.Parameters.Add("v_start_date", OracleDbType.Date).Value = "2025-10-01";
-                    command.Parameters.Add("v_end_date", OracleDbType.Date).Value = "2025-10-01";
-                    command.Parameters.Add("x_result_data", OracleDbType.RefCursor).Direction = ParameterDirection.Output;
-
-                    connection.Open();
-
-                    using var reader = command.ExecuteReader();
-                    if (reader.Read()) return reader.GetString(0);
-                }
-            }
-            catch (Exception ex) { Console.WriteLine($"Error: {ex.Message}"); }
-            return string.Empty;
-        }
     }
 }

@@ -15,7 +15,7 @@ namespace PriceCompare.Core.Helpers
             var builder = new ConfigurationBuilder()
                 .SetBasePath(basePath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile("queries.json", optional: true, reloadOnChange: true); // load SqlQueries & StoredProcedures
+                .AddJsonFile("queries.json", optional: true, reloadOnChange: true);
             _configuration = builder.Build();
             _initialized = true;
         }
@@ -50,14 +50,31 @@ namespace PriceCompare.Core.Helpers
         public static string GetStoredProcedure(string key)
         {
             EnsureInitialized();
-            var val = _configuration[$"StoredProcedures:{key}"];
-            return string.IsNullOrWhiteSpace(val) ? key : val;
+            var sp = _configuration[$"Sql:StoredProcedures:{key}"];
+            if (!string.IsNullOrWhiteSpace(sp)) 
+                return sp;
+            
+            sp = _configuration[$"Oracle:StoredProcedures:{key}"];
+            if (!string.IsNullOrWhiteSpace(sp)) 
+                return sp;
+            
+            sp = _configuration[$"StoredProcedures:{key}"];
+            return string.IsNullOrWhiteSpace(sp) ? key : sp;
         }
 
         public static string GetSqlQuery(string key)
         {
             EnsureInitialized();
-            return _configuration[$"SqlQueries:{key}"] ?? string.Empty;
+            var q = _configuration[$"Sql:Queries:{key}"];
+            if (!string.IsNullOrWhiteSpace(q)) 
+                return q;
+            
+            q = _configuration[$"Oracle:Queries:{key}"];
+            if (!string.IsNullOrWhiteSpace(q)) 
+                return q;
+            
+            q = _configuration[$"SqlQueries:{key}"];
+            return q ?? string.Empty;
         }
     }
 }

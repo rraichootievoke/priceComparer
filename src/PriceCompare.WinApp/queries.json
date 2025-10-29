@@ -1,13 +1,21 @@
 {
-  "SqlQueries": {
-    "GetQuoteDataByOrderNum": "SELECT MyDoorOrderNum, LineItemPriceDescription, LineTotalPrice, QuoteTotalPrice FROM dbo.QuoteData WHERE MyDoorOrderNum = @OrderNum",
-    "DealerOrdersSearch": "SELECT mdOrder.OrderId, mdSalesLead.SaleLeadId, mdSalesLead.FullName, mddealerconfig.DealerId, mddealerconfig.DealerName, mddealerconfig.OracleDealerId, mddealerconfig.DealerType, mdSalesLead.ProjectName AS SaleLead_ProjectName, mdSalesLead.Source AS SaleLead_Source, mdOrder.Source AS Order_Source, mdOrder.Configuration, mdOrder.Status, mdOrder.IntegrationXML, mduser.UserId, mduser.Username, mduser.Email, mdOrder.CreatedOn FROM [mydoor].[SalesLead] AS mdSalesLead INNER JOIN [mydoor].[Order] AS mdOrder ON mdSalesLead.SaleLeadId = mdOrder.SaleLeadId INNER JOIN [mydoor].[MyDoorUser] AS mdUser ON mdSalesLead.UserId = mdUser.UserId INNER JOIN [mydoor].[DealerConfiguration] mddealerconfig ON mdUser.DealerId = mddealerconfig.DealerId INNER JOIN [Admin].[ProjectStatus] adPs ON mdOrder.Status = adPs.Value WHERE mdOrder.Status NOT IN (1) AND (@OrderId IS NULL OR mdOrder.OrderId IN (@OrderId)) AND (@OracleDealerId IS NULL OR mddealerconfig.OracleDealerId = '59999') AND (@DealerName IS NULL OR mddealerconfig.DealerName LIKE '%' + @DealerName + '%') AND (@DealerId IS NULL OR mddealerconfig.DealerId = @DealerId) AND ((@CreatedOnStart IS NULL OR @CreatedOnEnd IS NULL) OR (mdOrder.CreatedOn BETWEEN @CreatedOnStart AND @CreatedOnEnd))"
+  "Sql": {
+    "Queries": {
+      "GetQuoteDataByOrderNum": "SELECT MyDoorOrderNum, LineItemPriceDescription, LineTotalPrice, QuoteTotalPrice FROM dbo.QuoteData WHERE MyDoorOrderNum = @OrderNum",
+      "DealerOrdersSearch": "SELECT mdOrder.OrderId, mdSalesLead.SaleLeadId, mdSalesLead.FullName, mddealerconfig.DealerId, mddealerconfig.DealerName, mddealerconfig.OracleDealerId, mddealerconfig.DealerType, mdSalesLead.ProjectName AS SaleLead_ProjectName, mdSalesLead.Source AS SaleLead_Source, mdOrder.Source AS Order_Source, mdOrder.Configuration, mdOrder.Status, mdOrder.IntegrationXML, mduser.UserId, mduser.Username, mduser.Email, mdOrder.CreatedOn FROM [mydoor].[SalesLead] AS mdSalesLead INNER JOIN [mydoor].[Order] AS mdOrder ON mdSalesLead.SaleLeadId = mdOrder.SaleLeadId INNER JOIN [mydoor].[MyDoorUser] AS mdUser ON mdSalesLead.UserId = mdUser.UserId INNER JOIN [mydoor].[DealerConfiguration] mddealerconfig ON mdUser.DealerId = mddealerconfig.DealerId INNER JOIN [Admin].[ProjectStatus] adPs ON mdOrder.Status = adPs.Value WHERE mdOrder.Status NOT IN (1) AND (@OrderId IS NULL OR mdOrder.OrderId IN (@OrderId)) AND (@OracleDealerId IS NULL OR mddealerconfig.OracleDealerId = '59999') AND (@DealerName IS NULL OR mddealerconfig.DealerName LIKE '%' + @DealerName + '%') AND (@DealerId IS NULL OR mddealerconfig.DealerId = @DealerId) AND ((@CreatedOnStart IS NULL OR @CreatedOnEnd IS NULL) OR (mdOrder.CreatedOn BETWEEN @CreatedOnStart AND @CreatedOnEnd))"
+    },
+    "StoredProcedures": {
+      "GetRecentOrderItemDetails": "usp_GetRecentOrderItemDetails",
+      "GetOrderItemDetails": "usp_GetOrderItemDetails",
+      "InsertQuoteData": "usp_InsertQuoteData"
+    }
   },
-  "StoredProcedures": {
-    "GetRecentOrderItemDetails": "usp_GetRecentOrderItemDetails",
-    "GetOrderItemDetails": "usp_GetOrderItemDetails",
-    "InsertQuoteData": "usp_InsertQuoteData",
-    "OracleGetIStoreQuoteDetails": "XCBPC_ISTORE_TRK_DWNLDS_PKG.get_iStore_quote_details",
-    "OracleGetIStoreQuoteDetails1": "XCBPC_ISTORE_TRK_DWNLDS_PKG.get_iStore_quote_details1"
+  "Oracle": {
+    "Queries": {
+      
+    },
+    "StoredProcedures": {
+      "OracleGetIStoreQuoteDetails": "XCBPC_ISTORE_TRK_DWNLDS_PKG.get_iStore_quote_details"
+    }
   }
 }
