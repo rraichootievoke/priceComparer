@@ -1,11 +1,11 @@
 using Dapper;
 using Oracle.ManagedDataAccess.Client;
+using PriceCompare.Core.Contracts;
+using PriceCompare.Core.Helpers;
 using System.Data;
 using System.Data.SqlClient;
-using PriceCompare.Core.Helpers;
-using PriceCompare.Core.Contracts;
-using System.Linq; // for parameter enumeration
 using System.Diagnostics; // for Debug logging
+using System.Linq; // for parameter enumeration
 
 namespace PriceCompare.Core.Repositories
 {
@@ -110,21 +110,33 @@ namespace PriceCompare.Core.Repositories
                 using var connection = new OracleConnection(_oracleConnectionString);
                 await connection.OpenAsync();
 
-                using var command = new OracleCommand(ConfigurationHelper.GetStoredProcedure("OracleGetIStoreQuoteDetails1"), connection)
+                using var command = new OracleCommand(ConfigurationHelper.GetStoredProcedure("OracleGetIStoreQuoteDetails"), connection)
                 {
-                    CommandType = CommandType.StoredProcedure
+                    CommandType = CommandType.StoredProcedure,
+                    BindByName = true // ensure name binding matches procedure parameter names
                 };
 
+                // Match procedure signature: IN VARCHAR2, IN DATE, IN DATE, OUT VARCHAR2, OUT REF CURSOR
                 command.Parameters.Add("p_dealer_account_num", OracleDbType.Varchar2).Value = accountNumber;
-                command.Parameters.Add("p_start_date", OracleDbType.Varchar2).Value = fromDate.ToString("dd-MMM-yyyy");
-                command.Parameters.Add("p_end_date", OracleDbType.Varchar2).Value = toDate.ToString("dd-MMM-yyyy");
-                command.Parameters.Add("X_ERROR_MESSAGE", OracleDbType.Varchar2, 4000).Direction = ParameterDirection.Output;
-                command.Parameters.Add("x_result_data", OracleDbType.RefCursor).Direction = ParameterDirection.Output;
+                command.Parameters.Add("p_start_date", OracleDbType.Date).Value = fromDate.Date; // pass as DATE, avoid string & NLS issues
+                command.Parameters.Add("p_end_date", OracleDbType.Date).Value = toDate.Date;
+                var errorParam = command.Parameters.Add("X_ERROR_MESSAGE", OracleDbType.Varchar2,4000);
+                errorParam.Direction = ParameterDirection.Output;
+                var cursorParam = command.Parameters.Add("x_result_data", OracleDbType.RefCursor);
+                cursorParam.Direction = ParameterDirection.Output;
 
                 using var reader = await command.ExecuteReaderAsync();
 
+                // Check error message returned by procedure before consuming cursor rows
+                var errorMessage = errorParam.Value as string;
+                if (!string.IsNullOrWhiteSpace(errorMessage))
+                {
+                    throw new ApplicationException($"Oracle stored procedure returned error: {errorMessage}");
+                }
+
                 while (await reader.ReadAsync())
                 {
+                    // Defensive null checks & conversions
                     var orderData = new OrderResponseModel
                     {
                         MyDoorOrderNum = reader["MYDOOR_ORDER_NUM"].ToString(),

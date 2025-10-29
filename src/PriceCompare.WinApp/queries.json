@@ -15,7 +15,7 @@
       
     },
     "StoredProcedures": {
-      "OracleGetIStoreQuoteDetails": "XCBPC_ISTORE_TRK_DWNLDS_PKG.get_iStore_quote_details"
+      "OracleGetIStoreQuoteDetails": "XCBPC_ISTORE_TRK_DWNLDS_PKG.get_iStore_quote_details1"
     }
   }
 }

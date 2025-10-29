@@ -29,7 +29,26 @@ namespace PriceCompareApp
 
         private async void Form1_Load(object sender, EventArgs e)
         {
+            // Initialize the day range label on load
+            statusStrip.Text = "Welcome..";
+            UpdateDaysRangeLabel();
             await LoadDealersAsync();
+        }
+
+        private void UpdateDaysRangeLabel()
+        {
+            var from = dtpFrom.Value.Date;
+            var to = dtpTo.Value.Date;
+            var diff = (to - from).TotalDays;
+            if (diff < 0)
+            {
+                lblDaysRange.Text = "Invalid range"; // optional: indicate error
+            }
+            else
+            {
+                // Use inclusive day count if desired: (int)diff +1
+                lblDaysRange.Text = diff.ToString("0") + " days"; // exclusive count
+            }
         }
 
         private async Task LoadDealersAsync()
@@ -143,21 +162,30 @@ namespace PriceCompareApp
             try
             {
                 Cursor = Cursors.WaitCursor;
+
                 var selected = cbDealers.SelectedItem as DealerDisplay;
                 string? oracleDealerId = selected?.OracleDealerId;
                 string? dealerName = selected?.CompanyName;
                 int? dealerId = selected?.Id;
                 long? orderId = null;
-                if (long.TryParse(txtOrderId.Text.Trim(), out var oid)) orderId = oid; // user may supply order id
+
+                if (long.TryParse(txtOrderId.Text.Trim(), out var oid))
+                    orderId = oid; // user may supply order id
+
                 DateTime? start = dtpFrom.Value.Date;
                 DateTime? end = dtpTo.Value.Date;
+
                 var dt = await _orderService.SearchDealerOrdersAsync(status: null, orderId: orderId, oracleDealerId: oracleDealerId, dealerName: dealerName, dealerId: dealerId, createdStart: start, createdEnd: end);
                 _ordersTable = dt;
                 _ordersBindingSource.DataSource = _ordersTable;
                 dgvOrders.DataSource = _ordersBindingSource;
-                foreach (DataGridViewColumn col in dgvOrders.Columns) col.SortMode = DataGridViewColumnSortMode.Automatic; // enable sorting
-                statusStrip1.Items.Clear();
-                statusStrip1.Items.Add($"Records: {dt.Rows.Count}");
+                foreach (DataGridViewColumn col in dgvOrders.Columns)
+                {
+                    col.SortMode = DataGridViewColumnSortMode.Automatic;
+                }
+
+                statusStrip.Items.Clear();
+                statusStrip.Items.Add($"Records: {dt.Rows.Count}");
             }
             catch (Exception ex)
             {
@@ -171,24 +199,22 @@ namespace PriceCompareApp
 
         private void OrdersFilter_TextChanged(object? sender, EventArgs e)
         {
-            if (_ordersTable == null) 
+            if (_ordersTable == null)
                 return;
             var term = richTextBox1.Text.Trim().Replace("'", "''");
             var dv = _ordersTable.DefaultView;
             if (string.IsNullOrEmpty(term))
                 dv.RowFilter = string.Empty;
-            else 
+            else
                 dv.RowFilter = $"Convert(OrderId,'System.String') LIKE '%{term}%' OR DealerName LIKE '%{term}%' OR OracleDealerId LIKE '%{term}%' OR FullName LIKE '%{term}%'";
-            statusStrip1.Items.Clear();
-            statusStrip1.Items.Add($"Filtered: {dv.Count}/{_ordersTable.Rows.Count}");
+            statusStrip.Items.Clear();
+            statusStrip.Items.Add($"Filtered: {dv.Count}/{_ordersTable.Rows.Count}");
         }
 
         private async Task LoadRecentOrdersAsync(int? days = null)
         {
             try
             {
-                Cursor = Cursors.WaitCursor;
-
                 var distinctDt = await _orderService.GetRecentOrdersAsync(days);
                 dgvOrdersList.DataSource = distinctDt;
 
@@ -205,10 +231,6 @@ namespace PriceCompareApp
             catch (Exception ex)
             {
                 MessageBox.Show($"Error loading order item details: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                Cursor = Cursors.Default;
             }
         }
 
@@ -247,12 +269,15 @@ namespace PriceCompareApp
         {
             try
             {
-                await LoadRecentOrdersAsync();
-
                 btnSearch.Enabled = false;
-                Cursor = Cursors.WaitCursor;
+                await LoadRecentOrdersAsync();
+                
+                var selected = cbDealers.SelectedItem as DealerDisplay;
+                string? oracleDealerId = selected?.OracleDealerId;
+                string? dealerName = selected?.CompanyName;
+                int? dealerId = selected?.Id;
 
-                var orderDataList = await _orderService.FetchAndSaveOrderDataAsync(dtpFrom.Value, dtpTo.Value, txtOrderId.Text.Trim());
+                var orderDataList = await _orderService.FetchAndSaveOrderDataAsync(dtpFrom.Value, dtpTo.Value, oracleDealerId);
 
                 if (orderDataList.Count > 0)
                 {
@@ -273,7 +298,6 @@ namespace PriceCompareApp
             finally
             {
                 btnSearch.Enabled = true;
-                Cursor = Cursors.Default;
             }
         }
 
@@ -284,7 +308,8 @@ namespace PriceCompareApp
             dtpTo.Value = DateTime.Now;
             richTextBox1.Clear();
             _ordersBindingSource.RemoveFilter();
-            statusStrip1.Items.Clear();
+            statusStrip.Items.Clear();
+            UpdateDaysRangeLabel();
         }
 
         private async void dgvOrdersList_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -313,6 +338,16 @@ namespace PriceCompareApp
                     await LoadOrderDetailsAsync(orderId);
                 }
             }
+        }
+
+        private void dtpFrom_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateDaysRangeLabel();
+        }
+
+        private void dtpTo_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateDaysRangeLabel();
         }
     }
 }

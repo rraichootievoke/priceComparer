@@ -43,22 +43,23 @@
             txtOrderId = new TextBox();
             btnClear = new Button();
             gbSearch = new GroupBox();
+            lblDaysRange = new Label();
+            dgvOrders = new DataGridView();
             richTextBox1 = new RichTextBox();
             lblOrders = new Label();
             splitContainer1 = new SplitContainer();
             label1 = new Label();
             label2 = new Label();
-            statusStrip1 = new StatusStrip();
-            dgvOrders = new DataGridView();
+            statusStrip = new StatusStrip();
             ((System.ComponentModel.ISupportInitialize)dgvMyDoorData).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvOrdersList).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgviStoreData).BeginInit();
             gbSearch.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvOrders).BeginInit();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvOrders).BeginInit();
             SuspendLayout();
             // 
             // dgvMyDoorData
@@ -80,7 +81,7 @@
             dgvOrdersList.AllowUserToOrderColumns = true;
             dgvOrdersList.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvOrdersList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvOrdersList.Location = new Point(12, 205);
+            dgvOrdersList.Location = new Point(9, 163);
             dgvOrdersList.Margin = new Padding(2);
             dgvOrdersList.Name = "dgvOrdersList";
             dgvOrdersList.RowHeadersWidth = 62;
@@ -104,7 +105,7 @@
             // lblDealers
             // 
             lblDealers.AutoSize = true;
-            lblDealers.Location = new Point(12, 25);
+            lblDealers.Location = new Point(25, 25);
             lblDealers.Margin = new Padding(2, 0, 2, 0);
             lblDealers.Name = "lblDealers";
             lblDealers.Size = new Size(45, 15);
@@ -113,10 +114,10 @@
             // 
             // btnSearch
             // 
-            btnSearch.Location = new Point(234, 81);
+            btnSearch.Location = new Point(409, 22);
             btnSearch.Margin = new Padding(2);
             btnSearch.Name = "btnSearch";
-            btnSearch.Size = new Size(117, 50);
+            btnSearch.Size = new Size(113, 52);
             btnSearch.TabIndex = 7;
             btnSearch.Text = "Search";
             btnSearch.UseVisualStyleBackColor = true;
@@ -125,17 +126,17 @@
             // lblFrom
             // 
             lblFrom.AutoSize = true;
-            lblFrom.Location = new Point(22, 57);
+            lblFrom.Location = new Point(3, 54);
             lblFrom.Margin = new Padding(2, 0, 2, 0);
             lblFrom.Name = "lblFrom";
-            lblFrom.Size = new Size(35, 15);
+            lblFrom.Size = new Size(67, 15);
             lblFrom.TabIndex = 8;
-            lblFrom.Text = "From";
+            lblFrom.Text = "Date Range";
             // 
             // lblTo
             // 
             lblTo.AutoSize = true;
-            lblTo.Location = new Point(37, 85);
+            lblTo.Location = new Point(195, 55);
             lblTo.Margin = new Padding(2, 0, 2, 0);
             lblTo.Name = "lblTo";
             lblTo.Size = new Size(20, 15);
@@ -145,30 +146,32 @@
             // cbDealers
             // 
             cbDealers.FormattingEnabled = true;
-            cbDealers.Location = new Point(62, 22);
+            cbDealers.Location = new Point(75, 22);
             cbDealers.Name = "cbDealers";
-            cbDealers.Size = new Size(289, 23);
+            cbDealers.Size = new Size(314, 23);
             cbDealers.TabIndex = 10;
             // 
             // dtpFrom
             // 
-            dtpFrom.Location = new Point(62, 51);
+            dtpFrom.Location = new Point(75, 51);
             dtpFrom.Name = "dtpFrom";
-            dtpFrom.Size = new Size(148, 23);
+            dtpFrom.Size = new Size(120, 23);
             dtpFrom.TabIndex = 11;
             dtpFrom.Value = new DateTime(2025, 9, 29, 2, 17, 42, 0);
+            dtpFrom.ValueChanged += dtpFrom_ValueChanged;
             // 
             // dtpTo
             // 
-            dtpTo.Location = new Point(62, 80);
+            dtpTo.Location = new Point(215, 51);
             dtpTo.Name = "dtpTo";
-            dtpTo.Size = new Size(148, 23);
+            dtpTo.Size = new Size(120, 23);
             dtpTo.TabIndex = 11;
+            dtpTo.ValueChanged += dtpTo_ValueChanged;
             // 
             // lblOrderId
             // 
             lblOrderId.AutoSize = true;
-            lblOrderId.Location = new Point(12, 111);
+            lblOrderId.Location = new Point(23, 83);
             lblOrderId.Margin = new Padding(2, 0, 2, 0);
             lblOrderId.Name = "lblOrderId";
             lblOrderId.Size = new Size(47, 15);
@@ -177,7 +180,7 @@
             // 
             // txtOrderId
             // 
-            txtOrderId.Location = new Point(62, 108);
+            txtOrderId.Location = new Point(75, 80);
             txtOrderId.Name = "txtOrderId";
             txtOrderId.Size = new Size(148, 23);
             txtOrderId.TabIndex = 12;
@@ -185,7 +188,7 @@
             // 
             // btnClear
             // 
-            btnClear.Location = new Point(355, 81);
+            btnClear.Location = new Point(526, 22);
             btnClear.Margin = new Padding(2);
             btnClear.Name = "btnClear";
             btnClear.Size = new Size(117, 50);
@@ -196,29 +199,47 @@
             // 
             // gbSearch
             // 
-            gbSearch.Controls.Add(dgvOrders);
+            gbSearch.Controls.Add(lblDaysRange);
             gbSearch.Controls.Add(txtOrderId);
             gbSearch.Controls.Add(btnClear);
             gbSearch.Controls.Add(lblDealers);
             gbSearch.Controls.Add(btnSearch);
             gbSearch.Controls.Add(lblFrom);
             gbSearch.Controls.Add(dtpTo);
-            gbSearch.Controls.Add(lblTo);
             gbSearch.Controls.Add(dtpFrom);
             gbSearch.Controls.Add(lblOrderId);
             gbSearch.Controls.Add(cbDealers);
+            gbSearch.Controls.Add(lblTo);
             gbSearch.Location = new Point(12, 12);
             gbSearch.Name = "gbSearch";
-            gbSearch.Size = new Size(488, 144);
+            gbSearch.Size = new Size(648, 115);
             gbSearch.TabIndex = 14;
             gbSearch.TabStop = false;
+            // 
+            // lblDaysRange
+            // 
+            lblDaysRange.AutoSize = true;
+            lblDaysRange.Location = new Point(340, 55);
+            lblDaysRange.Margin = new Padding(2, 0, 2, 0);
+            lblDaysRange.Name = "lblDaysRange";
+            lblDaysRange.Size = new Size(52, 15);
+            lblDaysRange.TabIndex = 14;
+            lblDaysRange.Text = "360 days";
+            // 
+            // dgvOrders
+            // 
+            dgvOrders.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvOrders.Location = new Point(1032, 105);
+            dgvOrders.Name = "dgvOrders";
+            dgvOrders.Size = new Size(69, 34);
+            dgvOrders.TabIndex = 18;
             // 
             // richTextBox1
             // 
             richTextBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            richTextBox1.Location = new Point(506, 21);
+            richTextBox1.Location = new Point(666, 21);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(640, 135);
+            richTextBox1.Size = new Size(477, 135);
             richTextBox1.TabIndex = 15;
             richTextBox1.Text = "";
             // 
@@ -226,7 +247,7 @@
             // 
             lblOrders.AutoSize = true;
             lblOrders.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblOrders.Location = new Point(12, 174);
+            lblOrders.Location = new Point(9, 132);
             lblOrders.Margin = new Padding(2, 0, 2, 0);
             lblOrders.Name = "lblOrders";
             lblOrders.Size = new Size(75, 30);
@@ -236,7 +257,7 @@
             // splitContainer1
             // 
             splitContainer1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            splitContainer1.Location = new Point(505, 205);
+            splitContainer1.Location = new Point(502, 163);
             splitContainer1.Name = "splitContainer1";
             splitContainer1.Orientation = Orientation.Horizontal;
             // 
@@ -275,49 +296,42 @@
             label2.TabIndex = 18;
             label2.Text = "iStore Data";
             // 
-            // statusStrip1
+            // statusStrip
             // 
-            statusStrip1.Location = new Point(0, 777);
-            statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(1155, 22);
-            statusStrip1.TabIndex = 17;
-            statusStrip1.Text = "statusStrip1";
-            // 
-            // dgvOrders
-            // 
-            dgvOrders.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvOrders.Location = new Point(403, 38);
-            dgvOrders.Name = "dgvOrders";
-            dgvOrders.Size = new Size(69, 34);
-            dgvOrders.TabIndex = 18;
+            statusStrip.Location = new Point(0, 570);
+            statusStrip.Name = "statusStrip";
+            statusStrip.Size = new Size(1155, 22);
+            statusStrip.TabIndex = 17;
+            statusStrip.Text = "statusStrip1";
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1155, 799);
-            Controls.Add(statusStrip1);
+            ClientSize = new Size(1155, 592);
+            Controls.Add(statusStrip);
             Controls.Add(splitContainer1);
             Controls.Add(lblOrders);
             Controls.Add(richTextBox1);
             Controls.Add(gbSearch);
             Controls.Add(dgvOrdersList);
+            Controls.Add(dgvOrders);
             Margin = new Padding(2);
             Name = "Form1";
-            Text = "Form1";
+            Text = "Clopay :|: Price Validator Tool";
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)dgvMyDoorData).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvOrdersList).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgviStoreData).EndInit();
             gbSearch.ResumeLayout(false);
             gbSearch.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvOrders).EndInit();
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel1.PerformLayout();
             splitContainer1.Panel2.ResumeLayout(false);
             splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvOrders).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -342,7 +356,8 @@
         private SplitContainer splitContainer1;
         private Label label1;
         private Label label2;
-        private StatusStrip statusStrip1;
+        private StatusStrip statusStrip;
         private DataGridView dgvOrders;
+        private Label lblDaysRange;
     }
 }
